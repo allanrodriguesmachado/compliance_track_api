@@ -23,9 +23,16 @@ class UserController extends AbstractController
     #[Route('/api/user/create', name: 'api_user_create', methods: ['POST'])]
     public function user(#[MapRequestPayload] CreateUserDTO $createUserDTO): JsonResponse
     {
-        $user = $this->userRegistrationService->execute($createUserDTO);
+        $this->userRegistrationService->execute($createUserDTO);
 
-        $this->userRepository->createUser($user);
         return new JsonResponse(['message' => 'User created successfully']);
+    }
+
+    #[Route('/api/user/login', name: 'api_user_login', methods: ['POST'])]
+    public function login(): JsonResponse
+    {
+        // O Symfony intercepta a requisição ANTES de chegar aqui.
+        // Se o código passar por aqui, é porque o security.yaml está com o caminho errado.
+        throw new \RuntimeException('O firewall do JWT não interceptou a rota.');
     }
 }
