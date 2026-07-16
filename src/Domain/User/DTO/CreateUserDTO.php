@@ -33,4 +33,9 @@ class CreateUserDTO implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
     }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
 }
