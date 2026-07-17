@@ -38,20 +38,23 @@ class UserController extends AbstractController
     }
 
     #[Route('/api/user/find-by-email', name: 'api_user_find_by_email', methods: ['POST'])]
-    public function findByEmail(#[MapRequestPayload] FindByEmailDTO $createUserDTO, EntityManagerInterface $entityManager): JsonResponse
+    public function findByEmail(#[MapRequestPayload] FindByEmailDTO $findByEmailDTO): JsonResponse
     {
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $createUserDTO->email]);
+        $user = $this->userRegistrationService->findByEmail($findByEmailDTO);
+
         if(!$user) {
             return new JsonResponse([
                 'message' => 'User not found.',
             ]);
         }
 
-        return new JsonResponse([
-            'fullName' => $user->firstName . ' ' . $user->lastName,
-            'email' => $user->email,
-            'cargo' => $user->accessLevel,
-            'createdAt' => $user->createdAt->format('Y-m-d H:i:s'),
-        ]);
+        return $this->json($user, 200, [], ['groups' => ['user:read']]);
+
+//        return new JsonResponse([
+//            'fullName' => $user->firstName . ' ' . $user->lastName,
+//            'email' => $user->email,
+//            'cargo' => $user->accessLevel,
+//            'createdAt' => $user->createdAt->format('Y-m-d H:i:s'),
+//        ]);
     }
 }

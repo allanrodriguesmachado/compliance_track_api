@@ -2,6 +2,7 @@
 
 namespace App\Domain\User\Repository;
 
+use App\Domain\User\DTO\FindByEmailDTO;
 use App\Domain\User\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,5 +19,14 @@ class UserRepository extends ServiceEntityRepository
     {
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+
+    public function findUserByEmail(FindByEmailDTO $findByEmailDTO): ?User
+    {
+         return $this->createQueryBuilder('u')
+            ->where('u.email = :email')
+            ->setParameter('email', $findByEmailDTO->email)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Domain\User\Service;
 
 use App\Domain\User\DTO\CreateUserDTO;
+use App\Domain\User\DTO\FindByEmailDTO;
 use App\Domain\User\Entity\User;
 use App\Domain\User\Repository\UserRepository;
 use phpDocumentor\Reflection\Types\Void_;
@@ -29,5 +30,10 @@ class UserRegistrationService
         $user->password = $this->passwordHasher->hashPassword($user, $createUserDTO->password);
 
         $this->userRepository->createUser($user);
+    }
+
+    public function findByEmail(FindByEmailDTO $findByEmailDTO): ?User
+    {
+        return $this->userRepository->findUserByEmail($findByEmailDTO);
     }
 }
