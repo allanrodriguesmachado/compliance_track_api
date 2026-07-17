@@ -4,19 +4,14 @@ namespace App\Controller\Api;
 
 use App\Domain\User\DTO\CreateUserDTO;
 use App\Domain\User\DTO\FindByEmailDTO;
-use App\Domain\User\Entity\User;
-use App\Domain\User\Repository\UserRepository;
 use App\Domain\User\Service\UserRegistrationService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
 class UserController extends AbstractController
 {
-
     public function __construct(
         public UserRegistrationService $userRegistrationService
     )
@@ -42,19 +37,12 @@ class UserController extends AbstractController
     {
         $user = $this->userRegistrationService->findByEmail($findByEmailDTO);
 
-        if(!$user) {
+        if (!$user) {
             return new JsonResponse([
                 'message' => 'User not found.',
             ]);
         }
 
         return $this->json($user, 200, [], ['groups' => ['user:read']]);
-
-//        return new JsonResponse([
-//            'fullName' => $user->firstName . ' ' . $user->lastName,
-//            'email' => $user->email,
-//            'cargo' => $user->accessLevel,
-//            'createdAt' => $user->createdAt->format('Y-m-d H:i:s'),
-//        ]);
     }
 }
