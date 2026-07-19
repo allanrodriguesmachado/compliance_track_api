@@ -6,22 +6,21 @@ use App\Domain\User\DTO\CreateUserDTO;
 use App\Domain\User\DTO\FindByEmailDTO;
 use App\Domain\User\Entity\User;
 use App\Domain\User\Repository\UserRepository;
+use App\Domain\User\Repository\UserRepositoryInterface;
 use phpDocumentor\Reflection\Types\Void_;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserRegistrationService
 {
     public function __construct(
-        public UserRepository $userRepository,
+        public UserRepositoryInterface $userRepository,
         public UserPasswordHasherInterface $passwordHasher
     )
     {
     }
 
-    public function execute(CreateUserDTO $createUserDTO): void
+    public function execute(CreateUserDTO $createUserDTO): ?User
     {
-        $this->passwordHasher->hashPassword($createUserDTO, $createUserDTO->password);
-
         $user = new User();
         $user->firstName = $createUserDTO->firstName;
         $user->lastName = $createUserDTO->lastName;
@@ -29,7 +28,7 @@ class UserRegistrationService
         $user->accessLevel = $createUserDTO->accessLevel;
         $user->password = $this->passwordHasher->hashPassword($user, $createUserDTO->password);
 
-        $this->userRepository->createUser($user);
+        return $this->userRepository->createUser($user);
     }
 
     public function findByEmail(FindByEmailDTO $findByEmailDTO): ?User

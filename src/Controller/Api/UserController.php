@@ -21,6 +21,20 @@ class UserController extends AbstractController
     #[Route('/api/user/create', name: 'api_user_create', methods: ['POST'])]
     public function user(#[MapRequestPayload] CreateUserDTO $createUserDTO): JsonResponse
     {
+        if(!filter_var($createUserDTO->email, FILTER_VALIDATE_EMAIL) || empty($createUserDTO->email)) {
+            return $this->json([
+                'error' => true,
+                'message' => 'Email is invalid',
+            ], 404);
+        }
+
+        if($this->userRegistrationService->findByEmail((new FindByEmailDTO($createUserDTO->email)))){
+            return $this->json([
+                'error' => true,
+                'message' => 'User with this email already exists.'
+            ], 404);
+        }
+
         $this->userRegistrationService->execute($createUserDTO);
 
         return new JsonResponse(['message' => 'User created successfully']);
